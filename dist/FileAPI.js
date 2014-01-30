@@ -1264,6 +1264,18 @@
 					, postNameConcat = api.postNameConcat
 				;
 
+				// Append data
+				_each(options.data, function add(val, name){
+					if( typeof val == 'object' ){
+						_each(val, function (v, i){
+							add(v, postNameConcat(name, i));
+						});
+					}
+					else {
+						Form.append(name, val);
+					}
+				});
+
 				(function _addFile(file/**Object*/){
 					if( file.image ){ // This is a FileAPI.Image
 						queue.inc();
@@ -1322,19 +1334,6 @@
 						Form.append(name, file, filename);
 					}
 				})(file);
-
-
-				// Append data
-				_each(options.data, function add(val, name){
-					if( typeof val == 'object' ){
-						_each(val, function (v, i){
-							add(v, postNameConcat(name, i));
-						});
-					}
-					else {
-						Form.append(name, val);
-					}
-				});
 
 				queue.check();
 			},
@@ -1900,6 +1899,9 @@
 				, queue = api.queue(function (){ fn(false, canvas); })
 				, renderImageToCanvas = api.renderImageToCanvas
 			;
+
+			// Normalize angle
+			deg = deg - Math.floor(deg/360)*360;
 
 			// For `renderImageToCanvas`
 			image._type = this.file.type;
